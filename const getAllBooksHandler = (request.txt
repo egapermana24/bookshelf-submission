@@ -1,0 +1,57 @@
+const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
+
+  if (name) {
+    const filteredBooks = books
+      .filter((book) => book.name.toLowerCase().includes(name.toLowerCase()))
+      .map(({ id, name, publisher }) => ({ id, name, publisher }));
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: filteredBooks,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (reading !== undefined) {
+    const filteredBooks = books
+      .filter((book) => Number(book.reading) === Number(reading))
+      .map(({ id, name, publisher }) => ({ id, name, publisher }));
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: filteredBooks,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (finished !== undefined) {
+    const filteredBooks = books
+      .filter((book) => Number(book.finished) === Number(finished))
+      .map(({ id, name, publisher }) => ({ id, name, publisher }));
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: filteredBooks,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books: books.map(({ id, name, publisher }) => ({ id, name, publisher })),
+    },
+  });
+  response.code(200);
+  return response;
+};
