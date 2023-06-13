@@ -1,6 +1,10 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
+const welcomeHandler = (request, h) => {
+  return h.response('Hai, selamat datang!').code(200);
+};
+
 const addBookHandler = (request, h) => {
   const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
 
@@ -185,6 +189,7 @@ const deleteBookByIdHandler = (request, h) => {
 };
 
 module.exports = {
+  welcomeHandler,
   addBookHandler,
   getAllBooksHandler,
   getBookByIdHandler,
