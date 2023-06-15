@@ -18,6 +18,8 @@
     "object-shorthand": "off",
     "class-methods-use-this": "off",
     "linebreak-style": "off",
-    "eol-last": "off"
+    "eol-last": "off",
+    "object-curly-newline": "off",
+    "no-shadow": "off"
   }
 }
