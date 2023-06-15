@@ -1,9 +1,7 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
-const welcomeHandler = (request, h) => {
-  return h.response('Hai, selamat datang!').code(200);
-};
+const welcomeHandler = (request, h) => h.response('Hai, selamat datang!').code(200);
 
 const addBookHandler = (request, h) => {
   const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
@@ -11,7 +9,31 @@ const addBookHandler = (request, h) => {
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
-  const finished = pageCount === readPage;
+
+  if (!name || name === '' || name === null) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. Mohon isi nama buku',
+    });
+    response.code(400);
+    return response;
+  }
+  if (readPage > pageCount) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
+    });
+    response.code(400);
+    return response;
+  }
+  const isFinished = (pageCountt, readPagee) => {
+    if (pageCountt === readPagee) {
+      return true;
+    }
+    return false;
+  };
+  const finished = isFinished(pageCount, readPage);
+
   const newBook = {
     name,
     year,
@@ -69,16 +91,105 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBooksHandler = (request, h) => {
-  const allBooks = books;
-  const hasilMap = allBooks.map((book) => ({
-    id: book.id,
-    name: book.name,
-    publisher: book.publisher,
-  }));
+  const { name, reading, finished } = request.query;
+
+  if (name) {
+    const lowName = name.toLowerCase();
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: books
+          .filter((n) => n.name.toLowerCase() === lowName)
+          .map((bookss) => ({
+            id: bookss.id,
+            name: bookss.name,
+            publisher: bookss.publisher,
+          })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (reading === '1') {
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: books
+          .filter((r) => Number(r.reading) == reading)
+          .map((bookss) => ({
+            id: bookss.id,
+            name: bookss.name,
+            publisher: bookss.publisher,
+          })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (reading === '0') {
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: books
+          .filter((r) => Number(r.reading) == reading)
+          .map((bookss) => ({
+            id: bookss.id,
+            name: bookss.name,
+            publisher: bookss.publisher,
+          })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (finished === '1') {
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: books
+          .filter((f) => Number(f.finished) == finished)
+          .map((bookss) => ({
+            id: bookss.id,
+            name: bookss.name,
+            publisher: bookss.publisher,
+          })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
+  if (finished === '0') {
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: books
+          .filter((f) => Number(f.finished) == finished)
+          .map((bookss) => ({
+            id: bookss.id,
+            name: bookss.name,
+            publisher: bookss.publisher,
+          })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+
   const response = h.response({
     status: 'success',
     data: {
-      books: hasilMap,
+      books: books
+        .map((m) => ({
+          id: m.id,
+          name: m.name,
+          publisher: m.publisher,
+        }))
+        .slice(0, 2),
     },
   });
   response.code(200);
